@@ -1,0 +1,24 @@
+﻿<Window x:Class="Main.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Main"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="1050">
+    <Grid>
+        <DataGrid x:Name="SetsDataGrid" Margin="10,10,500,10" SelectionChanged="SetsView_SelectionChanged"/>
+        <TextBox x:Name="RoundNameTextBox" TextAlignment="Center" HorizontalAlignment="Right" Margin="0,10,118,0" Text="Round" TextWrapping="Wrap" VerticalAlignment="Top" Width="260"/>
+        <TextBox x:Name="Player1TextBox" HorizontalAlignment="Right" Margin="0,130,285,0" Text="Player1" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
+        <TextBox x:Name="Player2TextBox" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,130,10,0" Text="Player2" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
+        <TextBox x:Name="Player1ScoreTextBox" HorizontalAlignment="Right" TextAlignment="Center" Margin="0,130,248,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="32" Height="18"/>
+        <TextBox x:Name="Player2ScoreTextBox" HorizontalAlignment="Right" TextAlignment="Center" Margin="0,130,215,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="32" Height="18"/>
+        <Button x:Name="SwitchSidesButton" Content="&lt;=&gt;" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,153,215,0" VerticalAlignment="Top" Height="25" Width="65" Click="ChangeScoreButton_Click"/>
+        <Button x:Name="AddScoreP1Button" Content="+" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,153,285,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
+        <Button x:Name="RemoveScoreP1Button" Content="-" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,153,315,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
+        <Button x:Name="AddScoreP2Button" Content="+" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,153,185,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
+        <Button x:Name="RemoveScoreP2Button" Content="-" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,153,155,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
+        <Button x:Name="AppendDataButton" Content="Aktualizuj scoreboard" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="475" Click="AppendDataButton_Click"/>
+        <CheckBox x:Name="IsChallongeUpdate" Content="Aktualizuj Challonge?" HorizontalAlignment="Right" Margin="0,0,351,35" VerticalAlignment="Bottom"/>
+    </Grid>
+</Window>
