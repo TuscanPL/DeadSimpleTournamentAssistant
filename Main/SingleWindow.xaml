@@ -17,6 +17,6 @@
         <Button x:Name="RemoveScoreP1Button" Content="-" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,214,0,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
         <Button x:Name="AddScoreP2Button" Content="+" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,214,40,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
         <Button x:Name="RemoveScoreP2Button" Content="-" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,214,10,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
-        <Button x:Name="AppendDataButton" Content="Aktualizuj scoreboard" HorizontalAlignment="Center" Margin="0,404,0,0" VerticalAlignment="Top" Width="474" Click="AppendDataButton_Click"/>
+        <Button x:Name="AppendDataButton" Content="Aktualizuj scoreboard" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="474" Click="AppendDataButton_Click" Margin="0,0,0,10"/>
     </Grid>
 </Window>
