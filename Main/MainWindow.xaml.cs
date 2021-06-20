@@ -1,4 +1,5 @@
 ﻿using BLL.Interfaces;
+using BLL.Interfaces.Settings;
 using BLL.Internal;
 using BLL.Model;
 using BLL.Model.Settings;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Main
 {
@@ -17,18 +19,19 @@ namespace Main
     public partial class MainWindow : Window
     {
         private readonly ITournamentApiControlService _challongeService;
+        private readonly ISettingsModelFactory _settingsModelFactory;
         private readonly IFileService _fileService;
-        private readonly TournamentAssistantOptions _options;
+        private TournamentAssistantOptions _options => _settingsModelFactory.GetSettings();
         private Tournament _tournament;
         private IEnumerable<Match> _sets;
         private Match _currentSet;
-        public MainWindow(TournamentAssistantOptions options, ITournamentApiControlService challongeService, IFileService fileService)
+        public MainWindow(ITournamentApiControlService challongeService, IFileService fileService, ISettingsModelFactory settingsModelFactory)
         {
             _challongeService = challongeService;
             _fileService = fileService;
-            _options = options;
+            _settingsModelFactory = settingsModelFactory;
             InitializeComponent();
-            ConfigureMainWindow(options);
+            ConfigureMainWindow(_options);
         }
 
         private void ConfigureMainWindow(TournamentAssistantOptions options)
@@ -55,6 +58,78 @@ namespace Main
                 _currentSet = _sets.FirstOrDefault(c => c.Id == selectedItem.SetId);
                 PopulateDetailsMenu();
             }
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+
+            App.ServiceProvider.GetService<SettingsWindow>().Show();
+        }
+
+        private void AppendDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentSet == null) return;
+
+            var appendedSet = _currentSet;
+            if (appendedSet.IsSideSwitched)
+                appendedSet = SwitchSides(appendedSet);
+
+            var fileDto = new FileDataDTO()
+            {
+                Player1Name = FormatPlayerNames(Player1TextBox.Text),
+                Player1Score = Player1ScoreTextBox.Text,
+                Player2Name = FormatPlayerNames(Player2TextBox.Text),
+                Player2Score = Player2ScoreTextBox.Text,
+                RoundText = RoundNameTextBox.Text
+            };
+
+            _fileService.AppendData(fileDto);
+            if (IsChallongeUpdate.IsChecked.Value)
+                _challongeService.UpdateMatch(appendedSet);
+        }
+
+        private void ChangeScoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            var castedSender = sender as Button;
+            if (castedSender == null || _currentSet == null) return;
+
+            switch (castedSender.Name)
+            {
+                case nameof(AddScoreP1Button):
+                    _currentSet.Player1Score += 1;
+                    break;
+                case nameof(AddScoreP2Button):
+                    _currentSet.Player2Score += 1;
+                    break;
+                case nameof(RemoveScoreP1Button):
+                    _currentSet.Player1Score -= 1;
+                    break;
+                case nameof(RemoveScoreP2Button):
+                    _currentSet.Player2Score -= 1;
+                    break;
+                case nameof(SwitchSidesButton):
+                    _currentSet = SwitchSides(_currentSet);
+                    break;
+                default:
+                    throw new Exception("Something went wrong. No event to bind.");
+            }
+
+            PopulateDetailsMenu();
+        }
+
+        private Match SwitchSides(Match set)
+        {
+            var player = set.Player1;
+            var playerScore = set.Player1Score;
+
+            set.Player1 = set.Player2;
+            set.Player1Score = set.Player2Score;
+            set.Player2 = player;
+            set.Player2Score = playerScore;
+            set.IsSideSwitched = !set.IsSideSwitched;
+
+            return set;
         }
 
         private IEnumerable<SetListViewModel> PrepareSetListView(IEnumerable<Match> sets)
@@ -86,70 +161,7 @@ namespace Main
             Player2ScoreTextBox.Text = _currentSet.Player2Score.ToString();
         }
 
-        private void ChangeScoreButton_Click(object sender, RoutedEventArgs e)
-        {
-            var castedSender = sender as Button;
-            if (castedSender == null || _currentSet == null) return;
-
-            switch (castedSender.Name)
-            {
-                case nameof(AddScoreP1Button):
-                    _currentSet.Player1Score += 1;
-                    break;
-                case nameof(AddScoreP2Button):
-                    _currentSet.Player2Score += 1;
-                    break;
-                case nameof(RemoveScoreP1Button):
-                    _currentSet.Player1Score -= 1;
-                    break;
-                case nameof(RemoveScoreP2Button):
-                    _currentSet.Player2Score -= 1;
-                    break;
-                case nameof(SwitchSidesButton):
-                    _currentSet = SwitchSides(_currentSet);
-                    break;
-                default:
-                    throw new Exception("Coś srogo jebło, nie ma podpiętego ewentu do kliknięcia.");
-            }
-
-            PopulateDetailsMenu();
-        }
-
-        private Match SwitchSides(Match set)
-        {
-            var player = set.Player1;
-            var playerScore = set.Player1Score;
-
-            set.Player1 = set.Player2;
-            set.Player1Score = set.Player2Score;
-            set.Player2 = player;
-            set.Player2Score = playerScore;
-            set.IsSideSwitched = !set.IsSideSwitched;
-
-            return set;
-        }
-
-        private void AppendDataButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_currentSet == null) return;
-
-            var appendedSet = _currentSet;
-            if (appendedSet.IsSideSwitched)
-                appendedSet = SwitchSides(appendedSet);
-
-            var fileDto = new FileDataDTO()
-            {
-                Player1Name = FormatPlayerNames(Player1TextBox.Text),
-                Player1Score = Player1ScoreTextBox.Text,
-                Player2Name = FormatPlayerNames(Player2TextBox.Text),
-                Player2Score = Player2ScoreTextBox.Text,
-                RoundText = RoundNameTextBox.Text
-            };
-
-            _fileService.AppendData(fileDto);
-            if (IsChallongeUpdate.IsChecked.Value)
-                _challongeService.UpdateMatch(appendedSet);
-        }
+        
 
         private void RecurrentSetsUpdate(object sender, EventArgs e)
         {
