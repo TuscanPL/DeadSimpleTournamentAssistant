@@ -1,4 +1,5 @@
 ﻿using BLL.Interfaces;
+using BLL.Interfaces.Settings;
 using BLL.Model.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Logging.EventLog;
 using Services.External;
+using Services.Internal;
 using System;
 using System.IO;
 using System.Windows;
@@ -17,7 +19,7 @@ namespace Main
     /// </summary>
     public partial class App : Application
     {
-        public IServiceProvider ServiceProvider { get; private set; }
+        public static IServiceProvider ServiceProvider { get; private set; }
 
         public IConfiguration Configuration { get; private set; }
         public ILogger<App> Logger { get; private set; }
@@ -53,6 +55,7 @@ namespace Main
         {
             services.AddSingleton<MainWindow>();
             services.AddSingleton<SingleWindow>();
+            services.AddSingleton<SettingsWindow>();
             services.AddSingleton<ITournamentApiControlService, ChallongeApiService>();
             services.AddSingleton<IFileService, FileService>();
         }
@@ -61,7 +64,11 @@ namespace Main
         {
             var config = new TournamentAssistantOptions();
             Configuration.Bind(nameof(TournamentAssistantOptions), config);
-            services.AddSingleton(config);
+
+            var settingsModelFactory = new SettingsModelService(config);
+            services.AddSingleton<ISettingsModelFactory>(provider => settingsModelFactory);
+            services.AddSingleton<ISettingsModelUpdate>(provider => settingsModelFactory);
+            services.AddScoped<TournamentAssistantOptions>(provider => settingsModelFactory.GetSettings());
 
             Options = config;
         }
@@ -70,16 +77,8 @@ namespace Main
         {
             try
             {
-                if (Options.IsOffline)
-                {
-                    var singleWindow = ServiceProvider.GetService<SingleWindow>();
-                    singleWindow.Show();
-                }
-                else
-                {
-                    var mainWindow = ServiceProvider.GetService<MainWindow>();
-                    mainWindow.Show();
-                }
+                var settingsWindow = ServiceProvider.GetService<SettingsWindow>();
+                settingsWindow.Show();
             }
             catch (Exception ex)
             {

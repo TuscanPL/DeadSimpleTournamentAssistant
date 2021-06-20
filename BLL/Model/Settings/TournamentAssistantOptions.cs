@@ -7,5 +7,6 @@
         public int PlayerNicknameCutoff { get; set; }
         public bool IsOffline { get; set; }
         public ApiOptions Api { get; set; }
+        public FilePathOptions Files { get; set; }
     }
 }

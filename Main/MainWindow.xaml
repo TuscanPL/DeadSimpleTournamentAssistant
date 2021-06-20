@@ -20,5 +20,6 @@
         <Button x:Name="RemoveScoreP2Button" Content="-" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,153,155,0" VerticalAlignment="Top" Height="25" Width="25" Click="ChangeScoreButton_Click"/>
         <Button x:Name="AppendDataButton" Content="Aktualizuj scoreboard" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="475" Click="AppendDataButton_Click"/>
         <CheckBox x:Name="IsChallongeUpdate" Content="Aktualizuj Challonge?" HorizontalAlignment="Right" Margin="0,0,351,35" VerticalAlignment="Bottom"/>
+        <Button x:Name="SettingsButton" Content="Settings" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="60" Height="20" Click="SettingsButton_Click"/>
     </Grid>
 </Window>
